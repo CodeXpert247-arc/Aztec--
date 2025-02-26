@@ -1,0 +1,24 @@
+import { messages, type Message, type InsertMessage } from "../shared/schema";
+
+export class MemStorage {
+  private messages: Map<number, Message> = new Map();
+  private currentId = 1;
+
+  async createMessage(insertMessage: InsertMessage & { response: string }): Promise<Message> {
+    const id = this.currentId++;
+    const message: Message = {
+      id,
+      prompt: insertMessage.prompt,
+      response: insertMessage.response,
+      timestamp: new Date(),
+    };
+    this.messages.set(id, message);
+    return message;
+  }
+
+  async getMessages(): Promise<Message[]> {
+    return Array.from(this.messages.values());
+  }
+}
+
+export const storage = new MemStorage();
